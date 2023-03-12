@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  db:
+    container_name: scheduling-db
+    hostname: scheduling-db
+    image: mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_DATABASE: scheduling
+      MYSQL_ROOT_PASSWORD: password
+
+      
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+      
+  api:
+    container_name: scheduling-api
+    restart: always
+    build:
+      context: .
+    image: scheduling-api
+    ports:
+      - 8081:8081
+    depends_on:
+      - db
+    environment:
+      MYSQL_HOSTNAME: scheduling-db
+
+volumes:
+  db:
+    driver: local
+    
+    

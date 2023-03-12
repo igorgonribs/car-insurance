@@ -1,140 +1,258 @@
 {
 	"info": {
-		"_postman_id": "3245cf2e-110e-48f1-99ce-f157006eb8ca",
-		"name": "Scheduling API",
+		"_postman_id": "131ccd5c-3bcd-4f56-99d6-fff10df27d56",
+		"name": "Car Insurance API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "18507686"
+		"_exporter_id": "5196241"
 	},
 	"item": [
 		{
-			"name": "Agendamento",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZWRpY29AZW1haWwuY29tIiwicm9sZXMiOlsiRE9DVE9SIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9hcGkvdjEvbG9naW4iLCJleHAiOjE2NTg4NDA4Mjd9.MRNwBGWxjsu9mNy7B6QsYmJxyDz459WLhrXRcDjuKPo",
-						"type": "default"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"dataHora\": \"2022-08-03 09:00:00\",\r\n    \"paciente\": {\r\n        \"nome\": \"João Castro\",\r\n        \"cpf\": \"69723767007\"\r\n    }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Security",
+			"item": [
+				{
+					"name": "Logoff",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/logoff",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"logoff"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8081/api/v1/attendance/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"attendance",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "email",
-							"value": "medico@email.com",
-							"type": "default"
+				{
+					"name": "Sign up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"teste@email.com\",\r\n  \"senha\": \"password\",\r\n  \"confirmacaoSenha\": \"password\",\r\n  \"cpf\": \"512.595.690-20\",\r\n  \"dataNascimento\": \"10/03/1980\",\r\n  \"name\": \"Nome teste 2\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
 						{
-							"key": "senha",
-							"value": "password",
-							"type": "default"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var token = jsonData[\"token\"];\r",
+									"pm.environment.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
 						}
-					]
-				},
-				"url": {
-					"raw": "http://localhost:8081/api/v1/login",
-					"protocol": "http",
-					"host": [
-						"localhost"
 					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"login"
-					]
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "employee@email.com",
+									"type": "default"
+								},
+								{
+									"key": "senha",
+									"value": "password",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Sign up",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"medico@email.com\",\r\n  \"senha\": \"password\",\r\n  \"confirmacaoSenha\": \"password\",\r\n  \"especialidade\": \"Cardiologista\",\r\n  \"cpf\": \"425.499.040-52\",\r\n  \"dataNascimento\": \"10/03/1980\",\r\n  \"name\": \"Nome teste\",\r\n  \"telefone\": \"(21) 3232-6565\"\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Budget",
+			"item": [
+				{
+					"name": "Consulta Budget",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/insurance/budget/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"insurance",
+								"budget",
+								"1"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8081/api/v1/signup",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"signup"
-					]
+				{
+					"name": "Cadastra Budget",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"carId\": 1,\r\n    \"customerId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/insurance/budget",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"insurance",
+								"budget"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Atualiza Budget",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"budgetId\": 1,\r\n    \"carId\": 2,\r\n    \"customerId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/insurance/budget",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"insurance",
+								"budget"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deleta Budget",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/insurance/budget/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"insurance",
+								"budget",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "Logoff",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZWRpY29AZW1haWwuY29tIiwicm9sZXMiOlsiRE9DVE9SIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9hcGkvdjEvbG9naW4iLCJleHAiOjE2NTg4NDA4Mjd9.MRNwBGWxjsu9mNy7B6QsYmJxyDz459WLhrXRcDjuKPo",
-						"type": "default"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8081/api/v1/logoff",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"logoff"
-					]
-				}
-			},
-			"response": []
+			]
 		}
 	]
 }

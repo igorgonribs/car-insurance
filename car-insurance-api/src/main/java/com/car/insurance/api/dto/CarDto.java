@@ -10,6 +10,5 @@ public class CarDto {
 	private String carModel;
 	private String carManufacturer;
 	private String carYear;
-	private Boolean hasSinister;
 	
 }

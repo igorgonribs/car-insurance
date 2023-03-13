@@ -31,8 +31,6 @@ public class Car {
 
 	private Float fipeValue;
 	
-	private Boolean hasSinister;
-	
 	@OneToMany
 	private List<CarDriver> carDriver;
 }

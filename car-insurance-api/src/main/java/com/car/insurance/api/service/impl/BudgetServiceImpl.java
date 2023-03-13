@@ -5,6 +5,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import com.car.insurance.api.exception.NoMainDriverRegisteredException;
 import com.car.insurance.api.repository.BudgetRepository;
 import com.car.insurance.api.service.BudgetService;
 import com.car.insurance.api.service.CarService;
+import com.car.insurance.api.service.ClaimService;
 import com.car.insurance.api.service.CustomerService;
 
 @Service
@@ -33,6 +35,9 @@ public class BudgetServiceImpl implements BudgetService {
 	
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private ClaimService claimService;
 
 	@Autowired
 	private BudgetRepository budgetRepository;
@@ -70,8 +75,12 @@ public class BudgetServiceImpl implements BudgetService {
 			risks++;
 		}
 		
-		Optional<CarDriver> driverWithSinister = car.getCarDriver().stream().filter(item -> item.getDriver().getHasSinister()).findFirst();
-		if(driverWithSinister.isPresent()) {
+		List<Integer> driverIds  = car.getCarDriver().stream().map(item -> item.getDriver().getId()).collect(Collectors.toList());
+		if(!claimService.claimByDriverIdIn(driverIds).isEmpty()) {
+			risks++;
+		}
+		
+		if(!claimService.claimByCarId(car.getId()).isEmpty()) {
 			risks++;
 		}
 		return risks;
@@ -107,7 +116,6 @@ public class BudgetServiceImpl implements BudgetService {
 				.carManufacturer((budget.getCar().getManufacturer()))
 				.carModel(budget.getCar().getModel())
 				.carYear(budget.getCar().getReleaseYear())
-				.hasSinister(budget.getCar().getHasSinister())
 				.build();
 
 		List<DriverDto> driverDtoList = new ArrayList<>();
@@ -115,7 +123,6 @@ public class BudgetServiceImpl implements BudgetService {
 				carDriver -> driverDtoList.add(DriverDto.builder()
 						.driverBirthdate(carDriver.getDriver().getBirthdate())
 						.driverDocument(carDriver.getDriver().getDocument())
-						.driverHasSinister(carDriver.getDriver().getHasSinister())
 						.mainDriver(carDriver.getMainDriver())
 						.build()));
 

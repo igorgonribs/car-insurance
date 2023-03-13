@@ -83,16 +83,16 @@ public class CarInsuranceApiApplication implements CommandLineRunner {
 		user2 = userRepository.save(user2);
 
 		log.info("Inserindo cars de teste");
-		Car car1 = new Car(null, "Corsa", "Chevrolet", "2010", 20000f, false, null);
-		Car car2 = new Car(null, "Palio", "Fiat", "2015", 40000f, true, null);
-		Car car3 = new Car(null, "HB20", "Hyundai", "2020", 60000f, false, null);
+		Car car1 = new Car(null, "Corsa", "Chevrolet", "2010", 20000f, null);
+		Car car2 = new Car(null, "Palio", "Fiat", "2015", 40000f, null);
+		Car car3 = new Car(null, "HB20", "Hyundai", "2020", 60000f, null);
 		car1 = carRepository.save(car1);
 		car2 = carRepository.save(car2);
 		car3 = carRepository.save(car3);
 
 		log.info("Inserindo drivers de teste");
-		Driver driver1 = new Driver(null, "Documento driver 1", LocalDate.of(1996, 4, 8), false);
-		Driver driver2 = new Driver(null, "Documento driver 2", LocalDate.of(1980, 6, 10), true);
+		Driver driver1 = new Driver(null, "Documento driver 1", LocalDate.of(1996, 4, 8));
+		Driver driver2 = new Driver(null, "Documento driver 2", LocalDate.of(1980, 6, 10));
 		driver1 = driverRepository.save(driver1);
 		driver2 = driverRepository.save(driver2);
 

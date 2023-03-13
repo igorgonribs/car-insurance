@@ -29,6 +29,4 @@ public class Driver {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate birthdate;
-
-	private Boolean hasSinister;
 }

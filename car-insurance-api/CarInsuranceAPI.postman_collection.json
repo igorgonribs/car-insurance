@@ -89,7 +89,7 @@
 							"urlencoded": [
 								{
 									"key": "email",
-									"value": "employee@email.com",
+									"value": "couponclient@email.com",
 									"type": "default"
 								},
 								{
@@ -110,6 +110,48 @@
 								"api",
 								"v1",
 								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"{{token}}\",\r\n    \"urn\": \"/af/financial-information/v1/test\",\r\n    \"method\": \"GET\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/validate-token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"validate-token"
 							]
 						}
 					},

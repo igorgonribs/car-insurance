@@ -24,6 +24,12 @@ public class AuthController {
 	@Autowired
 	private AuthService service;
 
+	@PostMapping("/login")
+	public ResponseEntity<String> logIn(HttpServletRequest request) {
+		//service.logout(request);
+		return ResponseEntity.ok().body("Usuário logado com sucesso.");
+	}
+	
 	@GetMapping("/logoff")
 	public ResponseEntity<String> logout(HttpServletRequest request) {
 		service.logout(request);

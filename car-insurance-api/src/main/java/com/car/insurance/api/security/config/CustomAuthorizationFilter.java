@@ -34,36 +34,34 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		if ("/api/login".equals(request.getServletPath())) {
-			filterChain.doFilter(request, response);
-		} else {
-			String authorizationHeader = request.getHeader("Authorization");
-			if (Objects.nonNull(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
-				try {
-					String token = tokenService.splitToken(authorizationHeader);
+		String authorizationHeader = request.getHeader("Authorization");
+		if (Objects.nonNull(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
+			try {
+				String token = tokenService.splitToken(authorizationHeader);
 
-					if (tokenService.isBlackListed(token))
-						throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "Token não é válido");
+				if (tokenService.isBlackListed(token))
+					throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "Token não é válido");
 
-					String username = tokenService.getUserNameFromToken(token);
-					String[] roles = tokenService.getRolesFromToken(token);
+				String username = tokenService.getUserNameFromToken(token);
+				String[] roles = tokenService.getRolesFromToken(token);
 
-					Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-					Arrays.stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
+				Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+				Arrays.stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
 
-					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username,
-							null, authorities);
-					SecurityContextHolder.getContext().setAuthentication(authToken);
-					filterChain.doFilter(request, response);
-				} catch (Exception ex) {
-					log.error("Failed to authenticate client: {}", ex.getLocalizedMessage());
-					response.setHeader("error", ex.getMessage());
-					response.sendError(HttpStatus.FORBIDDEN.value());
-				}
-			} else {
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, null,
+						authorities);
+				SecurityContextHolder.getContext().setAuthentication(authToken);
 				filterChain.doFilter(request, response);
+			} catch (Exception ex) {
+				// TODO: Tratar essas exceptions num handler e retornar informações sobre o erro
+				log.error("Failed to authenticate client: {}", ex.getLocalizedMessage());
+				response.setHeader("error", ex.getMessage());
+				response.sendError(HttpStatus.FORBIDDEN.value());
 			}
+		} else {
+			filterChain.doFilter(request, response);
 		}
+
 	}
 
 }

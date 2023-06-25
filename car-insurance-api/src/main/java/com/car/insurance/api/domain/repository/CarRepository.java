@@ -1,4 +1,4 @@
-package com.car.insurance.api.repository;
+package com.car.insurance.api.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

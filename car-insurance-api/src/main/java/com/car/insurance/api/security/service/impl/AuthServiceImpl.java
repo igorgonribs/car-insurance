@@ -1,8 +1,10 @@
-package com.car.insurance.api.service.impl;
+package com.car.insurance.api.security.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,16 +17,24 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.car.insurance.api.domain.security.Role;
-import com.car.insurance.api.domain.security.User;
-import com.car.insurance.api.dto.UserDto;
-import com.car.insurance.api.enums.RolesEnum;
-import com.car.insurance.api.exception.PasswordsDontMatchException;
-import com.car.insurance.api.exception.UserNotFoundException;
-import com.car.insurance.api.repository.security.RoleRepository;
-import com.car.insurance.api.repository.security.UserRepository;
-import com.car.insurance.api.service.AuthService;
-import com.car.insurance.api.service.TokenService;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.Payload;
+import com.car.insurance.api.security.domain.Resource;
+import com.car.insurance.api.security.domain.ResourceScope;
+import com.car.insurance.api.security.domain.Scope;
+import com.car.insurance.api.security.domain.User;
+import com.car.insurance.api.security.dto.UserDto;
+import com.car.insurance.api.security.dto.ValidateTokenRequestDto;
+import com.car.insurance.api.security.dto.ValidateTokenResponseDto;
+import com.car.insurance.api.security.exception.PasswordsDontMatchException;
+import com.car.insurance.api.security.exception.ResourceNotAllowsScopeException;
+import com.car.insurance.api.security.exception.ResourceNotFoundException;
+import com.car.insurance.api.security.exception.UserNotFoundException;
+import com.car.insurance.api.security.repository.ResourceRepository;
+import com.car.insurance.api.security.repository.RoleRepository;
+import com.car.insurance.api.security.repository.UserRepository;
+import com.car.insurance.api.security.service.AuthService;
+import com.car.insurance.api.security.service.TokenService;
 
 @Service
 public class AuthServiceImpl implements AuthService, UserDetailsService {
@@ -32,11 +42,13 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 	@Autowired
 	private UserRepository repository;
 	@Autowired
-	private RoleRepository roleRepository;
+	private RoleRepository scopeRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private TokenService tokenService;
+	@Autowired
+	private ResourceRepository resourceRepository;
 
 	@Override
 	public User signUpUser(UserDto userDto) throws PasswordsDontMatchException {
@@ -50,9 +62,9 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 		newUser.setName(userDto.getName());
 		newUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-		Role doctorRole = roleRepository.findByName(RolesEnum.EMPLOYEE.name());
+		Scope scope = scopeRepository.findByName(userDto.getScope());
 
-		newUser.setRoles(Arrays.asList(doctorRole));
+		newUser.setRoles(Arrays.asList(scope));
 		return repository.save(newUser);
 	}
 
@@ -99,6 +111,55 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 	@Override
 	public void logout(HttpServletRequest request) {
 		tokenService.addToBlackList(request.getHeader("Authorization").substring("Bearer ".length()));
+	}
+
+	@Override
+	public ValidateTokenResponseDto validateAccess(ValidateTokenRequestDto request)
+			throws ResourceNotFoundException, ResourceNotAllowsScopeException {
+		Payload payload = tokenService.getTokenPayload(request.getToken());
+
+		List<String> roles = getRolesInToken(payload);
+		List<Resource> resource = getResources(request, payload);
+
+		validateTokenAuthorization(payload.getSubject(), roles, resource.get(0));
+
+		return ValidateTokenResponseDto.builder()
+				.authenticated(true)
+				.authorized(true)
+				.method(request.getMethod())
+				.service(resource.get(0).getService())
+				.urn(request.getUrn())
+				.client(payload.getSubject())
+				.message(String.format("User %s is allowed to perform %s on resource %s", payload.getSubject(), request.getMethod(), request.getUrn()))
+				.build();
+	}
+
+	private void validateTokenAuthorization(String client, List<String> roles, Resource resource) throws ResourceNotAllowsScopeException {
+		Optional<ResourceScope> scope = resource.getAllowedScopes().stream()
+				.filter(rs -> roles.contains(rs.getScope().getName())).findFirst();
+
+		if (scope.isEmpty())
+			throw new ResourceNotAllowsScopeException(resource.getUrn(),resource.getHttpMethod(), client, String.format(
+					"Scope inside token is not allowed to perform %s on resource %s. Provided scopes were: %s",
+					resource.getHttpMethod(), resource.getUrn(), roles.toString()));
+	}
+
+	private List<String> getRolesInToken(Payload payload) {
+		Map<String, Claim> claims = payload.getClaims();
+		List<String> roles = claims.get("roles").asList(String.class);
+		return roles;
+	}
+
+	private List<Resource> getResources(ValidateTokenRequestDto request, Payload payload)
+			throws ResourceNotFoundException {
+		
+		List<Resource> resources = resourceRepository.findByUrnAndHttpMethod(request.getUrn(), request.getMethod());
+
+		if (resources.isEmpty())
+			throw new ResourceNotFoundException(request.getUrn(),request.getMethod(), payload.getSubject(), 
+					String.format("Requested resource '%s' with method '%s' not found in database.", request.getUrn(), request.getMethod()));
+		
+		return resources;
 	}
 
 }

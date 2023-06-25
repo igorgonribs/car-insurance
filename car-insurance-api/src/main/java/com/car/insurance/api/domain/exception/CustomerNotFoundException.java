@@ -1,4 +1,4 @@
-package com.car.insurance.api.exception;
+package com.car.insurance.api.domain.exception;
 
 import lombok.Getter;
 

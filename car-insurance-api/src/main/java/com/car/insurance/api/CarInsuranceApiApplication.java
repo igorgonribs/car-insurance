@@ -3,6 +3,7 @@ package com.car.insurance.api;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -16,17 +17,20 @@ import com.car.insurance.api.domain.Claim;
 import com.car.insurance.api.domain.Customer;
 import com.car.insurance.api.domain.Driver;
 import com.car.insurance.api.domain.Insurance;
-import com.car.insurance.api.domain.security.Role;
-import com.car.insurance.api.domain.security.User;
-import com.car.insurance.api.enums.RolesEnum;
-import com.car.insurance.api.repository.CarDriverRepository;
-import com.car.insurance.api.repository.CarRepository;
-import com.car.insurance.api.repository.ClaimRepository;
-import com.car.insurance.api.repository.CustomerRepository;
-import com.car.insurance.api.repository.DriverRepository;
-import com.car.insurance.api.repository.InsuranceRepository;
-import com.car.insurance.api.repository.security.RoleRepository;
-import com.car.insurance.api.repository.security.UserRepository;
+import com.car.insurance.api.domain.repository.CarDriverRepository;
+import com.car.insurance.api.domain.repository.CarRepository;
+import com.car.insurance.api.domain.repository.ClaimRepository;
+import com.car.insurance.api.domain.repository.CustomerRepository;
+import com.car.insurance.api.domain.repository.DriverRepository;
+import com.car.insurance.api.domain.repository.InsuranceRepository;
+import com.car.insurance.api.security.domain.Resource;
+import com.car.insurance.api.security.domain.ResourceScope;
+import com.car.insurance.api.security.domain.Scope;
+import com.car.insurance.api.security.domain.User;
+import com.car.insurance.api.security.repository.ResourceRepository;
+import com.car.insurance.api.security.repository.ResourceScopeRepository;
+import com.car.insurance.api.security.repository.RoleRepository;
+import com.car.insurance.api.security.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +42,7 @@ public class CarInsuranceApiApplication implements CommandLineRunner {
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	private RoleRepository roleRepository;
+	private RoleRepository scopeRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -61,8 +65,13 @@ public class CarInsuranceApiApplication implements CommandLineRunner {
 	@Autowired
 	private ClaimRepository claimRepository;
 
-	//@Autowired
-	//private BudgetRepository budgetRepository;
+	@Autowired
+	private ResourceRepository resourceRepository;
+
+	@Autowired
+	private ResourceScopeRepository resourceScopeRepository;
+	// @Autowired
+	// private BudgetRepository budgetRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CarInsuranceApiApplication.class, args);
@@ -70,15 +79,41 @@ public class CarInsuranceApiApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		log.info("Inserindo roles de teste");
-		Role role = new Role(null, RolesEnum.EMPLOYEE.name());
-		role = roleRepository.save(role);
+		log.info("Inserindo scopes de teste");
+		Scope scope1 = new Scope(null, "FINANCIAL_INFORMATION_API", new HashSet<>());
+		scope1 = scopeRepository.save(scope1);
+		Scope scope2 = new Scope(null, "COUPON_API", new HashSet<>());
+		scope2 = scopeRepository.save(scope2);
+
+		log.info("Inserindo resources de teste");
+		Resource resource1 = new Resource(null, "/af/financial-information/v1/test", "GET", "financial-information-api",
+				new HashSet<>());
+		resource1 = resourceRepository.save(resource1);
+		Resource resource2 = new Resource(null, "/af/coupon-affinity/v1/test", "GET", "coupon-affinity-api",
+				new HashSet<>());
+		resource2 = resourceRepository.save(resource2);
+
+		log.info("Relacionando scope1 com resource1");
+		ResourceScope resourceScope1 = new ResourceScope(resource1, scope1);
+		resourceScope1 = resourceScopeRepository.save(resourceScope1);
+		scope1.getResources().add(resourceScope1);
+		scope1 = scopeRepository.save(scope1);
+		resource1.getAllowedScopes().add(resourceScope1);
+		resource1 = resourceRepository.save(resource1);
+
+		log.info("Relacionando scope2 com resource2");
+		ResourceScope resourceScope2 = new ResourceScope(resource2, scope2);
+		resourceScope2 = resourceScopeRepository.save(resourceScope2);
+		scope2.getResources().add(resourceScope2);
+		scope2 = scopeRepository.save(scope2);
+		resource2.getAllowedScopes().add(resourceScope2);
+		resource2 = resourceRepository.save(resource2);
 
 		log.info("Inserindo users de teste");
-		User user1 = new User(null, "Nome Empregado", "employee@email.com", passwordEncoder.encode("password"),
-				"425.499.040-52", LocalDate.of(1996, 4, 8), Arrays.asList(role));
-		User user2 = new User(null, "Nome Cliente", "client@email.com", passwordEncoder.encode("password"),
-				"110.944.636-55", LocalDate.of(1994, 4, 29), null);
+		User user1 = new User(null, "Client financial info api", "financialclient@email.com",
+				passwordEncoder.encode("password"), "425.499.040-52", LocalDate.of(1996, 4, 8), Arrays.asList(scope1));
+		User user2 = new User(null, "Client coupon api", "couponclient@email.com", passwordEncoder.encode("password"),
+				"110.944.636-55", LocalDate.of(1994, 4, 29), Arrays.asList(scope2));
 		user1 = userRepository.save(user1);
 		user2 = userRepository.save(user2);
 
@@ -115,7 +150,7 @@ public class CarInsuranceApiApplication implements CommandLineRunner {
 		carDrive1 = carDriverRepository.save(carDrive1);
 		carDrive2 = carDriverRepository.save(carDrive2);
 		carDrive3 = carDriverRepository.save(carDrive3);
-		
+
 		car1.setCarDriver(Arrays.asList(carDrive1));
 		car2.setCarDriver(Arrays.asList(carDrive2));
 		car3.setCarDriver(Arrays.asList(carDrive3));
@@ -129,8 +164,8 @@ public class CarInsuranceApiApplication implements CommandLineRunner {
 		claim1 = claimRepository.save(claim1);
 		claim2 = claimRepository.save(claim2);
 
-		//log.info("Inserindo budgets de teste");
-		//Budget budget1 = new Budget(null, car1, customer1, 10000d);
-		//budget1 = budgetRepository.save(budget1);
+		// log.info("Inserindo budgets de teste");
+		// Budget budget1 = new Budget(null, car1, customer1, 10000d);
+		// budget1 = budgetRepository.save(budget1);
 	}
 }

@@ -1,4 +1,4 @@
-package com.car.insurance.api.controller;
+package com.car.insurance.api.domain.controller;
 
 import javax.validation.Valid;
 
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.car.insurance.api.dto.BudgetRequestDTO;
-import com.car.insurance.api.dto.BudgetResponseDto;
-import com.car.insurance.api.exception.CustomBusinessException;
-import com.car.insurance.api.exception.UserNotFoundException;
-import com.car.insurance.api.service.BudgetService;
+import com.car.insurance.api.domain.dto.BudgetRequestDTO;
+import com.car.insurance.api.domain.dto.BudgetResponseDto;
+import com.car.insurance.api.domain.exception.CustomBusinessException;
+import com.car.insurance.api.domain.service.BudgetService;
+import com.car.insurance.api.security.exception.UserNotFoundException;
 
 @RestController
 @RequestMapping(value = "/api/v1/insurance/budget")

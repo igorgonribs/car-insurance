@@ -1,4 +1,4 @@
-package com.car.insurance.api.service.impl;
+package com.car.insurance.api.domain.service.impl;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.car.insurance.api.domain.Claim;
-import com.car.insurance.api.repository.ClaimRepository;
-import com.car.insurance.api.service.ClaimService;
+import com.car.insurance.api.domain.repository.ClaimRepository;
+import com.car.insurance.api.domain.service.ClaimService;
 
 @Service
 public class ClaimServiceImpl implements ClaimService {

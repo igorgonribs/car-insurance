@@ -1,4 +1,4 @@
-package com.car.insurance.api.dto;
+package com.car.insurance.api.security.dto;
 
 import java.time.LocalDate;
 
@@ -40,4 +40,6 @@ public class UserDto {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	@JsonProperty("dataNascimento")
 	private LocalDate birthDate;
+	
+	private String scope;
 }

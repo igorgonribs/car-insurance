@@ -1,4 +1,4 @@
-package com.car.insurance.api.domain.security;
+package com.car.insurance.api.security.domain;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -43,5 +43,5 @@ public class User {
 	private LocalDate birthdate;
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	private List<Role> roles = new ArrayList<>();
+	private List<Scope> roles = new ArrayList<>();
 }

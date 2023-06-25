@@ -1,4 +1,4 @@
-package com.car.insurance.api.controller;
+package com.car.insurance.api.security.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.car.insurance.api.domain.security.User;
-import com.car.insurance.api.dto.UserDto;
-import com.car.insurance.api.service.AuthService;
+import com.car.insurance.api.security.domain.User;
+import com.car.insurance.api.security.dto.UserDto;
+import com.car.insurance.api.security.dto.ValidateTokenRequestDto;
+import com.car.insurance.api.security.dto.ValidateTokenResponseDto;
+import com.car.insurance.api.security.service.AuthService;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -32,5 +34,12 @@ public class AuthController {
 	public ResponseEntity<User> signUp(@Valid @RequestBody UserDto userDto) throws Exception {
 		User userCreated = service.signUpUser(userDto);
 		return ResponseEntity.created(null).body(userCreated);
+	}
+
+	@PostMapping("/validate-token")
+	public ResponseEntity<ValidateTokenResponseDto> validateAuthorization(@RequestBody ValidateTokenRequestDto request)
+			throws Exception {
+		ValidateTokenResponseDto response = service.validateAccess(request);
+		return ResponseEntity.ok().body(response);
 	}
 }

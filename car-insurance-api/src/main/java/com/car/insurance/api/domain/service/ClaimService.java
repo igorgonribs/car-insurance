@@ -1,4 +1,4 @@
-package com.car.insurance.api.service;
+package com.car.insurance.api.domain.service;
 
 import java.util.List;
 

@@ -19,13 +19,15 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Scope {
+public class Resource {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private String name;
-	
-	@OneToMany(mappedBy = "scope")
-    private Set<ResourceScope> resources = new HashSet<ResourceScope>();
+	private String urn;
+	private String httpMethod;
+	private String service;
+
+	@OneToMany(mappedBy = "resource")
+	private Set<ResourceScope> allowedScopes = new HashSet<ResourceScope>();
 }

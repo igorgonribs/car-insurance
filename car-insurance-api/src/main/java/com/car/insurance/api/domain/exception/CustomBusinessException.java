@@ -1,4 +1,4 @@
-package com.car.insurance.api.exception;
+package com.car.insurance.api.domain.exception;
 
 public abstract class CustomBusinessException extends Exception {
 

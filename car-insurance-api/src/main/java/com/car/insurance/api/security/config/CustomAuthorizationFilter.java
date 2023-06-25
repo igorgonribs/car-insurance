@@ -1,4 +1,4 @@
-package com.car.insurance.api.security;
+package com.car.insurance.api.security.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,10 +19,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.car.insurance.api.service.TokenService;
+import com.car.insurance.api.security.service.TokenService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
@@ -54,6 +56,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 					SecurityContextHolder.getContext().setAuthentication(authToken);
 					filterChain.doFilter(request, response);
 				} catch (Exception ex) {
+					log.error("Failed to authenticate client: {}", ex.getLocalizedMessage());
 					response.setHeader("error", ex.getMessage());
 					response.sendError(HttpStatus.FORBIDDEN.value());
 				}

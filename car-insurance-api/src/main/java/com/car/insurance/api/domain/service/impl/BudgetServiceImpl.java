@@ -1,4 +1,4 @@
-package com.car.insurance.api.service.impl;
+package com.car.insurance.api.domain.service.impl;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -14,18 +14,18 @@ import com.car.insurance.api.domain.Budget;
 import com.car.insurance.api.domain.Car;
 import com.car.insurance.api.domain.CarDriver;
 import com.car.insurance.api.domain.Customer;
-import com.car.insurance.api.dto.BudgetRequestDTO;
-import com.car.insurance.api.dto.BudgetResponseDto;
-import com.car.insurance.api.dto.CarDto;
-import com.car.insurance.api.dto.DriverDto;
-import com.car.insurance.api.exception.BudgetNotFoundException;
-import com.car.insurance.api.exception.CustomBusinessException;
-import com.car.insurance.api.exception.NoMainDriverRegisteredException;
-import com.car.insurance.api.repository.BudgetRepository;
-import com.car.insurance.api.service.BudgetService;
-import com.car.insurance.api.service.CarService;
-import com.car.insurance.api.service.ClaimService;
-import com.car.insurance.api.service.CustomerService;
+import com.car.insurance.api.domain.dto.BudgetRequestDTO;
+import com.car.insurance.api.domain.dto.BudgetResponseDto;
+import com.car.insurance.api.domain.dto.CarDto;
+import com.car.insurance.api.domain.dto.DriverDto;
+import com.car.insurance.api.domain.exception.BudgetNotFoundException;
+import com.car.insurance.api.domain.exception.CustomBusinessException;
+import com.car.insurance.api.domain.exception.NoMainDriverRegisteredException;
+import com.car.insurance.api.domain.repository.BudgetRepository;
+import com.car.insurance.api.domain.service.BudgetService;
+import com.car.insurance.api.domain.service.CarService;
+import com.car.insurance.api.domain.service.ClaimService;
+import com.car.insurance.api.domain.service.CustomerService;
 
 @Service
 public class BudgetServiceImpl implements BudgetService {

@@ -1,4 +1,4 @@
-package com.car.insurance.api.security;
+package com.car.insurance.api.security.config;
 
 import java.io.IOException;
 import java.util.Date;

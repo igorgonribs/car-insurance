@@ -1,7 +1,7 @@
-package com.car.insurance.api.service;
+package com.car.insurance.api.domain.service;
 
 import com.car.insurance.api.domain.Customer;
-import com.car.insurance.api.exception.CustomBusinessException;
+import com.car.insurance.api.domain.exception.CustomBusinessException;
 
 public interface CustomerService {
 

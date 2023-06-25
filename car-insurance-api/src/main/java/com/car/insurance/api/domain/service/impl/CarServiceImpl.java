@@ -1,4 +1,4 @@
-package com.car.insurance.api.service.impl;
+package com.car.insurance.api.domain.service.impl;
 
 import java.util.Optional;
 
@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.car.insurance.api.domain.Car;
-import com.car.insurance.api.exception.CarNotFoundException;
-import com.car.insurance.api.repository.CarRepository;
-import com.car.insurance.api.service.CarService;
+import com.car.insurance.api.domain.exception.CarNotFoundException;
+import com.car.insurance.api.domain.repository.CarRepository;
+import com.car.insurance.api.domain.service.CarService;
 
 @Service
 public class CarServiceImpl implements CarService {

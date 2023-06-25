@@ -1,6 +1,8 @@
-package com.car.insurance.api.service.impl;
+package com.car.insurance.api.security.service.impl;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,10 +12,12 @@ import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.impl.JWTParser;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.car.insurance.api.security.SecurityProperties;
-import com.car.insurance.api.service.TokenService;
+import com.auth0.jwt.interfaces.Payload;
+import com.car.insurance.api.security.config.SecurityProperties;
+import com.car.insurance.api.security.service.TokenService;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -65,5 +69,17 @@ public class TokenServiceImpl implements TokenService {
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJwt = verifier.verify(token);
 		return decodedJwt.getSubject();
+	}
+	
+	@Override
+	public Payload getTokenPayload(String token) {
+		Algorithm algorithm = Algorithm.HMAC256(properties.getTokenSecret());
+		JWTVerifier verifier = JWT.require(algorithm).build();
+		DecodedJWT decodedJwt = verifier.verify(token);
+		JWTParser parser = new JWTParser();
+		
+		String jwtEncoded = new String(Base64.getUrlDecoder().decode(decodedJwt.getPayload().getBytes()), StandardCharsets.UTF_8);
+		Payload payload = parser.parsePayload(jwtEncoded);
+		return payload;
 	}
 }

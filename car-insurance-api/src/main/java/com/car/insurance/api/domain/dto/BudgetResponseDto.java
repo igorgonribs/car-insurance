@@ -1,4 +1,4 @@
-package com.car.insurance.api.dto;
+package com.car.insurance.api.domain.dto;
 
 import java.util.List;
 

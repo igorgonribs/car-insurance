@@ -1,9 +1,9 @@
-package com.car.insurance.api.service;
+package com.car.insurance.api.domain.service;
 
-import com.car.insurance.api.dto.BudgetRequestDTO;
-import com.car.insurance.api.dto.BudgetResponseDto;
-import com.car.insurance.api.exception.BudgetNotFoundException;
-import com.car.insurance.api.exception.CustomBusinessException;
+import com.car.insurance.api.domain.dto.BudgetRequestDTO;
+import com.car.insurance.api.domain.dto.BudgetResponseDto;
+import com.car.insurance.api.domain.exception.BudgetNotFoundException;
+import com.car.insurance.api.domain.exception.CustomBusinessException;
 
 public interface BudgetService {
 
